@@ -32,7 +32,7 @@ def modular_inv(a, b):
     x, y, g = modular_inv(b, r)
     return y, x - q * y, g
 
-def elliptic_add(p, q, a, b, m):
+def suma_eliptica(p, q, a, b, m):
     # Si el punto es infinito devuleve el otro
     if p[2] == 0: return q
     if q[2] == 0: return p
@@ -57,17 +57,17 @@ def elliptic_add(p, q, a, b, m):
 
 
 # Multiplicacion (repeated addition and doubling) la forma más eficiente de multiplicación escalar
-def elliptic_mul(k, p, a, b, m):
+def multi_eliptica(k, p, a, b, m):
     r = (0, 1, 0)  # Infinito
     while k > 0:
         # Si el flag p esta activo devolver
         if p[2] > 1:
             return p
         if k % 2 == 1: # Si el numero es impar, indica que en binario acabaria en 1 con lo cual se realiza la operacion. Si es cero no se hace
-            r = elliptic_add(p, r, a, b, m)
+            r = suma_eliptica(p, r, a, b, m)
         k = k // 2
         #print(k)
-        p = elliptic_add(p, p, a, b, m)
+        p = suma_eliptica(p, p, a, b, m)
         #print(p)
     return r 
 
@@ -75,7 +75,7 @@ def elliptic_mul(k, p, a, b, m):
     k = bin(k)[2:]
     r = (0, 1, 0)  # Infinito
     for i in range(len(k)):
-        p = elliptic_add(p, p, a, b, m)
+        p = suma_eliptica(p, p, a, b, m)
     return p
 
 #----------- Algoritmo de Lenstra -------------
@@ -101,7 +101,7 @@ def lenstra(n, limit, timeout):
         
         k = 2
         while k < limit:
-            p = elliptic_mul(k, p, a, b, n)
+            p = multi_eliptica(k, p, a, b, n)
             # Elliptic arithmetic breaks
             if p[2] > 1:
                 #print("Resultado: ", p[2], " siendo el mcd(", p[2], ",", n, "): ")
